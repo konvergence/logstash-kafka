@@ -1,0 +1,90 @@
+version: '2'
+services:
+  logstash-shuttle-audits:
+    image: konvergence/logstash-kafka:v02
+    environment:
+      EL_HOST: es.opendistro
+      EL_PORT: '9200'
+      EL_SSL: 'true'
+      EL_SSL_VERIF_CERT: 'false'
+      EL_INDEX: shuttle-audits
+      KAFKA_SERVER: broker.kafka:9092
+      KAFKA_TOPIC: shuttle-audits
+      EL_USER: admin
+      EL_PASSWORD: YOUR_EL_PASSWORD
+      FINGERPRINT_ENABLE: 'true'
+      FINGERPRINT_FIELD: fingerprint
+      FINGERPRINT_KEY: kafka
+    stdin_open: true
+    tty: true
+    command:
+    - --run
+    labels:
+      io.rancher.container.pull_image: always
+  logstash-shuttle-users:
+    image: konvergence/logstash-kafka:v02
+    environment:
+      EL_HOST: es.opendistro
+      EL_PORT: '9200'
+      EL_SSL: 'true'
+      EL_SSL_VERIF_CERT: 'false'
+      EL_INDEX: shuttle-users
+      KAFKA_SERVER: broker.kafka:9092
+      KAFKA_TOPIC: shuttle-users
+      EL_USER: admin
+      EL_PASSWORD: YOUR_EL_PASSWORD
+      FINGERPRINT_ENABLE: 'true'
+      FINGERPRINT_FIELD: fingerprint
+      FINGERPRINT_KEY: kafka
+    stdin_open: true
+    tty: true
+    command:
+    - --run
+    labels:
+      io.rancher.container.pull_image: always
+  logstash-containers:
+    image: konvergence/logstash-kafka:v02
+    environment:
+      EL_HOST: es.opendistro
+      EL_PORT: '9200'
+      EL_SSL: 'true'
+      EL_SSL_VERIF_CERT: 'false'
+      EL_INDEX: containers
+      KAFKA_SERVER: broker.kafka:9092
+      KAFKA_TOPIC: docker-filebeat
+      EL_USER: admin
+      EL_PASSWORD: YOUR_EL_PASSWORD
+      FINGERPRINT_ENABLE: 'true'
+      FINGERPRINT_FIELD: fingerprint
+      FINGERPRINT_SOURCE: '["@timestamp","fields.rancher_service_name","message"]'
+      FINGERPRINT_KEY: kafka
+      STREAM1_INDEX: backups
+      STREAM1_FIELD: '[docker][container][image]'
+      STREAM1_REGEXP: /.*duplicity.*/
+    stdin_open: true
+    tty: true
+    command:
+    - --run
+    labels:
+      io.rancher.container.pull_image: always
+  logstash-shuttle-logs:
+    image: konvergence/logstash-kafka:v02
+    environment:
+      EL_HOST: es.opendistro
+      EL_PORT: '9200'
+      EL_SSL: 'true'
+      EL_SSL_VERIF_CERT: 'false'
+      EL_INDEX: shuttle-logs
+      KAFKA_SERVER: broker.kafka:9092
+      KAFKA_TOPIC: shuttle-logs
+      EL_USER: admin
+      EL_PASSWORD: YOUR_EL_PASSWORD
+      FINGERPRINT_ENABLE: 'true'
+      FINGERPRINT_FIELD: fingerprint
+      FINGERPRINT_KEY: kafka
+    stdin_open: true
+    tty: true
+    command:
+    - --run
+    labels:
+      io.rancher.container.pull_image: always

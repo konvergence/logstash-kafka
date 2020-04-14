@@ -1,0 +1,41 @@
+
+
+    if ${STREAM_FIELD} {
+
+        if ${STREAM_FIELD} =~ ${STREAM_REGEXP} {
+
+            if "${FINGERPRINT_ENABLE}" == "true" {
+                elasticsearch{
+                    ssl => ${EL_SSL}
+                    ssl_certificate_verification => ${EL_SSL_VERIF_CERT}
+                    hosts => "${EL_HOST}:${EL_PORT}"
+                    index => "${STREAM_INDEX}"
+                    document_type => "_doc"
+                    document_id => "%{${FINGERPRINT_FIELD}}"
+                    user => "${EL_USER}"
+                    password => "${EL_PASSWORD}"
+                }
+            }
+            else {
+                elasticsearch{
+                    ssl => ${EL_SSL}
+                    ssl_certificate_verification => ${EL_SSL_VERIF_CERT}
+                    hosts => "${EL_HOST}:${EL_PORT}"
+                    index => "${STREAM_INDEX}"
+                    document_type => "_doc"
+                    user => "${EL_USER}"
+                    password => "${EL_PASSWORD}"
+                }
+            }
+        }
+    }
+
+
+
+
+
+
+  
+
+
+

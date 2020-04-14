@@ -1,0 +1,65 @@
+input {
+
+    kafka {
+      bootstrap_servers => "${KAFKA_SERVER}"
+      topics => "${KAFKA_TOPIC}"
+      consumer_threads => ${KAFKA_CONSUMER_THREADS}
+      group_id => "${KAFKA_GROUPID}"
+      session_timeout_ms => "${KAFKA_SESSION_TIMEOUT_MS}"
+      request_timeout_ms => "${KAFKA_REQUEST_TIMEOUT_MS}"
+    }
+}
+
+filter {
+    json {
+      source => "message"
+    }
+
+    if "${FINGERPRINT_ENABLE}" == "true" {
+
+        if ![${FINGERPRINT_FIELD}] {
+            fingerprint {
+                source => ${FINGERPRINT_SOURCE}
+                concatenate_sources => true
+                target => "${FINGERPRINT_FIELD}"
+                method => "SHA1"
+                key => "${FINGERPRINT_KEY}"  # keypassphrase to generate the fingerprint SHA1, dot not changeit
+                base64encode => true
+            }
+        }
+    }
+}
+
+output{
+
+    # debug only to stdout
+    if "${OUTPUT_ONLY}" == "true" or  "${OUTPUT_MODE}" == "stdout" {
+        stdout{codec => rubydebug}
+
+    }
+    else { # output to elasticsearch
+
+        if "${FINGERPRINT_ENABLE}" == "true" {
+            elasticsearch{
+                ssl => ${EL_SSL}
+                ssl_certificate_verification => ${EL_SSL_VERIF_CERT}
+                hosts => "${EL_HOST}:${EL_PORT}"
+                index => "${EL_INDEX}"
+                document_id => "%{${FINGERPRINT_FIELD}}"
+                document_type => "_doc"
+                user => "${EL_USER}"
+                password => "${EL_PASSWORD}"
+            }
+        }
+        else {
+            elasticsearch{
+                ssl => ${EL_SSL}
+                ssl_certificate_verification => ${EL_SSL_VERIF_CERT}
+                hosts => "${EL_HOST}:${EL_PORT}"
+                index => "${EL_INDEX}"
+                document_type => "_doc"
+                user => "${EL_USER}"
+                password => "${EL_PASSWORD}"
+            }
+        }
+    }
