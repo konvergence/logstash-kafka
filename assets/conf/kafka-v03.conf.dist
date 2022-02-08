@@ -8,6 +8,7 @@ input {
       session_timeout_ms => "${KAFKA_SESSION_TIMEOUT_MS}"
       request_timeout_ms => "${KAFKA_REQUEST_TIMEOUT_MS}"
       max_partition_fetch_bytes => "${KAFKA_MAX_PARTITION_FETCH_BYTES}"
+      max_poll_interval_ms => "${KAFKA_POLL_INTERVAL_MS}"
     }
 }
 

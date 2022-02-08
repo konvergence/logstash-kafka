@@ -9,6 +9,7 @@ TAG="${1}"
 
 REGISTRY="konvergence"
 
-docker build --no-cache -t ${REGISTRY}/${IMAGE_NAME}:${TAG} -t ${REGISTRY}/${IMAGE_NAME}:latest .
+IMAGE_OPTIONS="--no-cache"
+docker build ${IMAGE_OPTIONS} -t ${REGISTRY}/${IMAGE_NAME}:${TAG} -t ${REGISTRY}/${IMAGE_NAME}:latest .
 
 #docker push ${REGISTRY}/${IMAGE_NAME}
